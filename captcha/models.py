@@ -1,8 +1,6 @@
 from django.db import models
 import datetime, sha
 
-
-
 class CaptchaStore(models.Model):
     challenge = models.CharField(blank=False, max_length=32)
     response = models.CharField(blank=False, max_length=32)

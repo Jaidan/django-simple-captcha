@@ -32,7 +32,6 @@ def noise_arcs(draw,image):
     return draw
 
 def noise_dots(draw,image):
-    
     size = image.size
     for p in range(int(size[0]*size[1]*0.1)):
         draw.point((random.randint(0, size[0]),random.randint(0, size[1])), fill=settings.CAPTCHA_FOREGROUND_COLOR )
@@ -43,6 +42,7 @@ def post_smooth(image):
     return image.filter(ImageFilter.SMOOTH)
 
 def post_deform(image):
+    # Work in progess :)
     return image
-    
+
     
