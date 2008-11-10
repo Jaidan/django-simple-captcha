@@ -22,12 +22,10 @@ def captcha_image(request,key):
     draw = ImageDraw.Draw(image)
     draw.text((2, 2), text, font = font, fill = settings.CAPTCHA_FOREGROUND_COLOR)
     
-    if settings.CAPTCHA_NOISE_FUNCTIONS:
-        for f in settings.CAPTCHA_NOISE_FUNCTIONS:
-            draw = getattr(__import__( '.'.join(f.split('.')[:-1]), {}, {}, ['']), f.split('.')[-1])(draw,image)
-    if settings.CAPTCHA_FILTER_FUNCTIONS:
-        for f in settings.CAPTCHA_FILTER_FUNCTIONS:
-            image = getattr(__import__( '.'.join(f.split('.')[:-1]), {}, {}, ['']), f.split('.')[-1])(image)
+    for f in settings.noise_functions():
+        draw = f(draw,image)
+    for f in settings.filter_functions():
+        image = f(image)
     
     out = StringIO()
     image.save(out,"PNG")

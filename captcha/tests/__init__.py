@@ -9,9 +9,9 @@ class CaptchaCase(TestCase):
     urls = 'captcha.tests.urls'
 
     def setUp(self):
-        self.default_challenge = getattr(__import__( '.'.join(settings.CAPTCHA_CHALLENGE_FUNCT.split('.')[:-1]), {}, {}, ['']), settings.CAPTCHA_CHALLENGE_FUNCT.split('.')[-1])()
-        self.math_challenge = getattr(__import__( '.'.join(settings.CAPTCHA_CHALLENGE_FUNCT.split('.')[:-1]), {}, {}, ['']), 'math_challenge')()
-        self.chars_challenge = getattr(__import__( '.'.join(settings.CAPTCHA_CHALLENGE_FUNCT.split('.')[:-1]), {}, {}, ['']), 'random_char_challenge')()
+        self.default_challenge = settings.get_challenge()()
+        self.math_challenge = settings._callable_from_string('captcha.helpers.math_challenge')()
+        self.chars_challenge = settings._callable_from_string('captcha.helpers.random_char_challenge')()
         
         self.default_store, created =  CaptchaStore.objects.get_or_create(challenge=self.default_challenge[0],response=self.default_challenge[1])
         self.math_store, created = CaptchaStore.objects.get_or_create(challenge=self.math_challenge[0],response=self.math_challenge[1])

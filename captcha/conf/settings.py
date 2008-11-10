@@ -10,4 +10,26 @@ CAPTCHA_NOISE_FUNCTIONS = getattr(settings,'CAPTCHA_NOISE_FUNCTIONS', ('captcha.
 CAPTCHA_FILTER_FUNCTIONS = getattr(settings,'CAPTCHA_FILTER_FUNCTIONS',('captcha.helpers.post_smooth',))
 CAPTCHA_WORDS_DICTIONARY = getattr(settings,'CAPTCHA_WORDS_DICTIONARY', '/usr/share/dict/words')
 CAPTCHA_FLITE_PATH = getattr(settings,'CAPTCHA_FLITE_PATH',None)
-CAPTCHA_TIMEOUT = getattr(settings, 'CAPTCHA_TIMEOUT', 5) #Minutes
+CAPTCHA_TIMEOUT = getattr(settings, 'CAPTCHA_TIMEOUT', 5) # Minutes
+
+
+def _callable_from_string(string_or_callable):
+    if callable(string_or_callable):
+        return string_or_callable
+    else:
+        return getattr(__import__( '.'.join(string_or_callable.split('.')[:-1]), {}, {}, ['']), string_or_callable.split('.')[-1])
+    
+def get_challenge():
+    return _callable_from_string(CAPTCHA_CHALLENGE_FUNCT)
+
+
+def noise_functions():
+    if CAPTCHA_NOISE_FUNCTIONS:
+        return map(_callable_from_string, CAPTCHA_NOISE_FUNCTIONS)
+    return list()
+
+def filter_functions():
+    if CAPTCHA_FILTER_FUNCTIONS:
+        return map(_callable_from_string, CAPTCHA_FILTER_FUNCTIONS)
+    return list()
+

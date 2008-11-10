@@ -23,8 +23,8 @@ class CaptchaTextInput(MultiWidget):
         return [None,None]
         
     def render(self, name, value, attrs=None):
-        generator = getattr(__import__( '.'.join(settings.CAPTCHA_CHALLENGE_FUNCT.split('.')[:-1]), {}, {}, ['']), settings.CAPTCHA_CHALLENGE_FUNCT.split('.')[-1])
-        challenge,response=generator()
+        challenge,response= settings.get_challenge()()
+        
         store, created = CaptchaStore.objects.get_or_create(challenge=challenge,response=response)
         key = store.hashkey
         value = [key, u'']
