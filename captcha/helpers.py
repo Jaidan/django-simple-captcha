@@ -40,9 +40,3 @@ def noise_dots(draw,image):
 def post_smooth(image):
     import ImageFilter
     return image.filter(ImageFilter.SMOOTH)
-
-def post_deform(image):
-    # Work in progess :)
-    return image
-
-    
