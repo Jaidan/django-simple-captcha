@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import random
 from captcha.conf import settings
 
@@ -16,6 +17,12 @@ def random_char_challenge():
         ret += chars[random.randint(0,len(chars)-1)]
     return ret.upper(),ret
 
+def unicode_challenge():
+    chars,ret = u'äàáëéèïíîöóòüúù', u''
+    for i in range(4):
+        ret += chars[random.randint(0,len(chars)-1)]
+    return ret.upper(), ret
+        
 def word_challenge():
     fd = file(settings.CAPTCHA_WORDS_DICTIONARY,'rb')
     l = fd.readlines()

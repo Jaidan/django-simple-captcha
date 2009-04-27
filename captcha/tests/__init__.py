@@ -1,7 +1,9 @@
-from captcha.models import CaptchaStore
+# -*- coding: utf-8 -*-
 from captcha.conf import settings
+from captcha.models import CaptchaStore
 from django.core.urlresolvers import reverse
 from django.test import TestCase
+from django.utils.translation import ugettext_lazy as _
 import datetime
 
 
@@ -12,13 +14,15 @@ class CaptchaCase(TestCase):
         self.default_challenge = settings.get_challenge()()
         self.math_challenge = settings._callable_from_string('captcha.helpers.math_challenge')()
         self.chars_challenge = settings._callable_from_string('captcha.helpers.random_char_challenge')()
+        self.unicode_challenge = settings._callable_from_string('captcha.helpers.unicode_challenge')()
         
         self.default_store, created =  CaptchaStore.objects.get_or_create(challenge=self.default_challenge[0],response=self.default_challenge[1])
         self.math_store, created = CaptchaStore.objects.get_or_create(challenge=self.math_challenge[0],response=self.math_challenge[1])
         self.chars_store, created = CaptchaStore.objects.get_or_create(challenge=self.chars_challenge[0],response=self.chars_challenge[1])
+        self.unicode_store, created = CaptchaStore.objects.get_or_create(challenge=self.unicode_challenge[0],response=self.unicode_challenge[1])
 
     def testImages(self):
-        for key in (self.math_store.hashkey, self.chars_store.hashkey, self.default_store.hashkey):
+        for key in (self.math_store.hashkey, self.chars_store.hashkey, self.default_store.hashkey, self.unicode_store.hashkey):
             response = self.client.get(reverse('captcha-image',kwargs=dict(key=key)))
             self.failUnlessEqual(response.status_code, 200)
             self.assertTrue(response.has_header('content-type'))
@@ -27,7 +31,7 @@ class CaptchaCase(TestCase):
     def testAudio(self):
         if not settings.CAPTCHA_FLITE_PATH:
             return
-        for key in (self.math_store.hashkey, self.chars_store.hashkey, self.default_store.hashkey):
+        for key in (self.math_store.hashkey, self.chars_store.hashkey, self.default_store.hashkey, self.unicode_store.hashkey):
             response = self.client.get(reverse('captcha-audio',kwargs=dict(key=key)))
             self.failUnlessEqual(response.status_code, 200)
             self.assertTrue(len(response.content) > 1024)
@@ -51,11 +55,13 @@ class CaptchaCase(TestCase):
         self.failUnlessEqual(r.status_code, 200)
         self.assertFalse(r.content.find('Form validated') > 0)
 
+
+        
     def testWrongSubmit(self):        
         r = self.client.get(reverse('captcha-test'))
         self.failUnlessEqual(r.status_code, 200)
         r = self.client.post(reverse('captcha-test'), dict(captcha_0='abc',captcha_1='wrong response', subject='xxx', sender='asasd@asdasd.com'))
-        self.assertFormError(r,'form','captcha','Error')
+        self.assertFormError(r,'form','captcha',_('Invalid CAPTCHA'))
 
     def testDeleteExpired(self):
         self.default_store.expiration = datetime.datetime.now() - datetime.timedelta(minutes=5)
