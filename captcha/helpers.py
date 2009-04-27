@@ -13,13 +13,13 @@ def math_challenge():
     
 def random_char_challenge():
     chars,ret = u'abcdefghijklmnopqrstuvwxyz', u''
-    for i in range(4):
+    for i in range(settings.CAPTCHA_LENGTH):
         ret += chars[random.randint(0,len(chars)-1)]
     return ret.upper(),ret
 
 def unicode_challenge():
     chars,ret = u'äàáëéèïíîöóòüúù', u''
-    for i in range(4):
+    for i in range(settings.CAPTCHA_LENGTH):
         ret += chars[random.randint(0,len(chars)-1)]
     return ret.upper(), ret
         
