@@ -1,7 +1,11 @@
 from django.db import models
 from captcha.conf import settings as captcha_settings
-import datetime, hashlib
-
+import datetime
+try:
+    import hashlib # sha for Python 2.5+
+except ImportError:
+    import sha # sha for Python 2.4 (deprecated in Python 2.6)
+    hashlib = False
 
 class CaptchaStore(models.Model):
     challenge = models.CharField(blank=False, max_length=32)
@@ -14,7 +18,10 @@ class CaptchaStore(models.Model):
         if not self.expiration:
             self.expiration = datetime.datetime.now() + datetime.timedelta(minutes= int(captcha_settings.CAPTCHA_TIMEOUT))
         if not self.hashkey:
-            self.hashkey = hashlib.new('sha', str(self.challenge) + str(self.response)).hexdigest()
+            if hashlib:
+                self.hashkey = hashlib.new('sha', str(self.challenge) + str(self.response)).hexdigest()
+            else:
+                self.hashkey = sha.new(str(self.challenge) + str(self.response)).hexdigest()
         super(CaptchaStore,self).save(force_insert=force_insert,force_update=force_update)
 
     def __unicode__(self):
