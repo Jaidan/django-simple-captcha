@@ -13,6 +13,7 @@ CAPTCHA_WORDS_DICTIONARY = getattr(settings,'CAPTCHA_WORDS_DICTIONARY', '/usr/sh
 CAPTCHA_FLITE_PATH = getattr(settings,'CAPTCHA_FLITE_PATH',None)
 CAPTCHA_TIMEOUT = getattr(settings, 'CAPTCHA_TIMEOUT', 5) # Minutes
 CAPTCHA_LENGTH = int(getattr(settings, 'CAPTCHA_LENGTH', 4)) # Chars
+CAPTCHA_IMAGE_BEFORE_FIELD = getattr(settings,'CAPTCHA_IMAGE_BEFORE_FIELD', True)
 
 def _callable_from_string(string_or_callable):
     if callable(string_or_callable):
