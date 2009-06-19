@@ -78,3 +78,4 @@ class CaptchaCase(TestCase):
             self.fail()
         except:
             pass
+        

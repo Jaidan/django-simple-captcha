@@ -13,7 +13,7 @@ class CaptchaStore(models.Model):
     hashkey = models.CharField(blank=False, max_length=40,unique=True)
     expiration = models.DateTimeField(blank=False)
     
-    def save(self,force_insert=False,force_update=False):
+    def save(self,*args,**kwargs):
         self.response = self.response.lower()
         if not self.expiration:
             self.expiration = datetime.datetime.now() + datetime.timedelta(minutes= int(captcha_settings.CAPTCHA_TIMEOUT))
@@ -22,12 +22,13 @@ class CaptchaStore(models.Model):
                 self.hashkey = hashlib.new('sha', str(self.challenge) + str(self.response)).hexdigest()
             else:
                 self.hashkey = sha.new(str(self.challenge) + str(self.response)).hexdigest()
-        super(CaptchaStore,self).save(force_insert=force_insert,force_update=force_update)
+        super(CaptchaStore,self).save(*args,**kwargs)
 
     def __unicode__(self):
         return self.challenge
 
-    @classmethod
+    
     def remove_expired(cls):
         cls.objects.filter(expiration__lte=datetime.datetime.now()).delete()
+    remove_expired = classmethod(remove_expired)
     
