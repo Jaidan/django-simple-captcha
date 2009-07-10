@@ -5,7 +5,7 @@ from captcha.conf import settings
 def math_challenge():
     operators = ('+','*','-',)
     operands = (random.randint(1,10),random.randint(1,10))
-    operator = operators[random.randint(0,len(operators)-1)]
+    operator = random.choice(operators)
     if operands[0] < operands[1] and '-' == operator:
         operands = (operands[1],operands[0])
     challenge = '%d%s%d' %(operands[0],operator,operands[1])
@@ -14,21 +14,20 @@ def math_challenge():
 def random_char_challenge():
     chars,ret = u'abcdefghijklmnopqrstuvwxyz', u''
     for i in range(settings.CAPTCHA_LENGTH):
-        ret += chars[random.randint(0,len(chars)-1)]
+        ret += random.choice(chars)
     return ret.upper(),ret
 
 def unicode_challenge():
     chars,ret = u'äàáëéèïíîöóòüúù', u''
     for i in range(settings.CAPTCHA_LENGTH):
-        ret += chars[random.randint(0,len(chars)-1)]
+        ret += random.choice(chars)
     return ret.upper(), ret
         
 def word_challenge():
     fd = file(settings.CAPTCHA_WORDS_DICTIONARY,'rb')
     l = fd.readlines()
-    pos = random.randint(0,len(l))
     fd.close()
-    word = l[pos].strip()
+    word = random.choice(l).strip()
     return word.upper(), word.lower()
     
 def noise_arcs(draw,image):
