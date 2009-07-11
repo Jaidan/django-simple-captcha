@@ -27,7 +27,10 @@ def word_challenge():
     fd = file(settings.CAPTCHA_WORDS_DICTIONARY,'rb')
     l = fd.readlines()
     fd.close()
-    word = random.choice(l).strip()
+    while True:
+        word = random.choice(l).strip()
+        if len(word) >= settings.CAPTCHA_DICTIONARY_MIN_LENGTH and len(word) <= settings.CAPTCHA_DICTIONARY_MAX_LENGTH:
+            break
     return word.upper(), word.lower()
     
 def noise_arcs(draw,image):
